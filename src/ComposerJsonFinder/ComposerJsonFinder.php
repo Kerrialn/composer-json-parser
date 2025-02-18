@@ -22,16 +22,16 @@ final class ComposerJsonFinder
         return null;
     }
 
-    public function getComposerJsonData(): null|array
+    public function getComposerJsonData(): array
     {
         $composerJsonPath = $this->findComposerJson(getcwd());
 
-        if (! empty($composerJsonPath)) {
-            $composerJsonContents = file_get_contents($composerJsonPath);
-            $composerJsonData = json_decode($composerJsonContents, true);
-            return $composerJsonData;
+        if (empty($composerJsonPath)) {
+            return [];
         }
 
-        return null;
+        $composerJsonContents = file_get_contents($composerJsonPath);
+        $composerJsonData = json_decode($composerJsonContents, true);
+        return $composerJsonData;
     }
 }

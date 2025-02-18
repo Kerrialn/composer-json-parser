@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace KerrialNewham\ComposerJsonParser;
 
+use Exception;
 use KerrialNewham\ComposerJsonParser\ComposerJsonFinder\ComposerJsonFinder;
 use KerrialNewham\ComposerJsonParser\Enum\PackageTypeEnum;
+use KerrialNewham\ComposerJsonParser\Exception\ComposerJsonNotFoundException;
 use KerrialNewham\ComposerJsonParser\Model\Autoload;
 use KerrialNewham\ComposerJsonParser\Model\Composer;
 use KerrialNewham\ComposerJsonParser\Model\Package;
@@ -20,9 +22,17 @@ final class Parser
 
     private readonly VersionParser $versionParser;
 
+    /**
+     * @throws Exception
+     */
     public function __construct()
     {
         $this->composerJsonData = (new ComposerJsonFinder())->getComposerJsonData();
+
+        if(empty($this->composerJsonData)){
+            throw new ComposerJsonNotFoundException();
+        }
+
         $this->versionParser = new VersionParser();
         $this->composer = new Composer();
     }
@@ -138,7 +148,7 @@ final class Parser
         }
     }
 
-    private function extractRequireDevPackages(array $composerRequireDevPackages) :void
+    private function extractRequireDevPackages(array $composerRequireDevPackages): void
     {
         foreach ($composerRequireDevPackages as $name => $version) {
             $package = new Package(
