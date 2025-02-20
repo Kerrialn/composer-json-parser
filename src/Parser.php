@@ -31,7 +31,6 @@ final class Parser
         $this->composer = new Composer();
     }
 
-
     public function withComposerJsonPath(?string $path = null): self
     {
         $projectRoot = getcwd();
@@ -47,7 +46,7 @@ final class Parser
             $composerJsonPath = $resolvedPath;
         }
 
-        if (!file_exists($composerJsonPath) || !is_file($composerJsonPath)) {
+        if (! file_exists($composerJsonPath) || ! is_file($composerJsonPath)) {
             throw new ComposerJsonNotFoundException("composer.json not found at: " . $composerJsonPath);
         }
 
