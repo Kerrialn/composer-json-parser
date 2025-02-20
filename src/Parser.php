@@ -42,7 +42,6 @@ final class Parser
         return $this;
     }
 
-
     public function getComposer(): Composer
     {
         return $this->composer;
