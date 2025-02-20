@@ -27,15 +27,21 @@ final class Parser
      */
     public function __construct()
     {
-        $this->composerJsonData = (new ComposerJsonFinder())->getComposerJsonData();
-
-        if(empty($this->composerJsonData)){
-            throw new ComposerJsonNotFoundException();
-        }
-
         $this->versionParser = new VersionParser();
         $this->composer = new Composer();
     }
+
+    public function withComposerJsonPath(string $path): self
+    {
+        $this->composerJsonData = (new ComposerJsonFinder())->getComposerJsonData($path);
+
+        if (empty($this->composerJsonData)) {
+            throw new ComposerJsonNotFoundException();
+        }
+
+        return $this;
+    }
+
 
     public function getComposer(): Composer
     {
