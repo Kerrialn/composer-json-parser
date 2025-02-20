@@ -22,7 +22,7 @@ final class VersionParser
         $wildcardPattern = '/^(?<version>.*?)(?<constraint>\*\s*)$/';
         if (preg_match($wildcardPattern, $versionString, $matches)) {
             $version = round((float) $matches['version'], 2);
-            return new PackageVersion(version: $version, versionConstraints: '*');
+            return new PackageVersion(versionString: $versionString, version: $version, versionConstraints: '*');
         }
         return null;
     }
@@ -36,7 +36,7 @@ final class VersionParser
             $versionConstraints = $matches['constraint'] ?? ''; // Keep this line as-is for now
             $version = $matches['version'];
 
-            return new PackageVersion(version: (float) $version, versionConstraints: $versionConstraints);
+            return new PackageVersion(versionString: $versionString, version: (float) $version, versionConstraints: $versionConstraints);
         }
 
         return null;
