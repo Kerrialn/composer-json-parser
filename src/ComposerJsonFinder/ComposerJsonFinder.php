@@ -8,7 +8,7 @@ final class ComposerJsonFinder
 {
     public function getComposerJsonData(string $path): array
     {
-        $composerJsonContents = file_get_contents("{$path}/composer.json");
+        $composerJsonContents = file_get_contents($path);
         $composerJsonData = json_decode($composerJsonContents, true);
         return $composerJsonData;
     }

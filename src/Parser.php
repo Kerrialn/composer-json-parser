@@ -31,13 +31,27 @@ final class Parser
         $this->composer = new Composer();
     }
 
-    public function withComposerJsonPath(string $path): self
-    {
-        $this->composerJsonData = (new ComposerJsonFinder())->getComposerJsonData($path);
 
-        if (empty($this->composerJsonData)) {
-            throw new ComposerJsonNotFoundException();
+    public function withComposerJsonPath(?string $path = null): self
+    {
+        $projectRoot = getcwd();
+        $resolvedPath = $path ? realpath($path) : $projectRoot;
+
+        if ($resolvedPath === false) {
+            throw new ComposerJsonNotFoundException("Invalid path: {$path}");
         }
+
+        if (is_dir($resolvedPath)) {
+            $composerJsonPath = $resolvedPath . DIRECTORY_SEPARATOR . 'composer.json';
+        } else {
+            $composerJsonPath = $resolvedPath;
+        }
+
+        if (!file_exists($composerJsonPath) || !is_file($composerJsonPath)) {
+            throw new ComposerJsonNotFoundException("composer.json not found at: " . $composerJsonPath);
+        }
+
+        $this->composerJsonData = (new ComposerJsonFinder())->getComposerJsonData($composerJsonPath);
 
         return $this;
     }
