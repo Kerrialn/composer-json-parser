@@ -2,7 +2,7 @@
     "name": "kerrialn/composer-json-parser",
     "description": "Access your composer.json as an object",
     "version": "1.1.0",
-    "homepage" : "https://github.com/kerrialn/composer-json-parser",
+    "homepage": "https://github.com/kerrialn/composer-json-parser",
     "type": "library",
     "license": "MIT",
     "minimum-stability": "stable",
@@ -29,24 +29,12 @@
             "KerrialNewham\\ComposerJsonParser\\Tests\\": "tests/"
         }
     },
-    "replace": {
-    },
     "scripts": {
         "rector": "vendor/bin/rector p --ansi",
         "rector-dry": "vendor/bin/rector p --dry-run --ansi",
         "phpstan": "php -d memory_limit=256M vendor/bin/phpstan analyze",
         "check-cs": "vendor/bin/ecs check --ansi",
-        "fix-cs": "vendor/bin/ecs check --fix --ansi",
-        "auto-scripts": {
-        },
-        "post-install-cmd": [
-        ],
-        "post-update-cmd": [
-        ]
-    },
-    "conflict": {
-    },
-    "extra": {
+        "fix-cs": "vendor/bin/ecs check --fix --ansi"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",

@@ -18,7 +18,7 @@ final class Composer
 
     private null|string $minimumStability = null;
 
-    private readonly ArrayCollection $require;
+    private ArrayCollection $require;
 
     private readonly ArrayCollection $config;
 
@@ -26,15 +26,15 @@ final class Composer
 
     private readonly ArrayCollection $devAutoload;
 
-    private readonly ArrayCollection $replace;
+    private ArrayCollection $replace;
 
-    private readonly ArrayCollection $scripts;
+    private ArrayCollection $scripts;
 
-    private readonly ArrayCollection $conflict;
+    private ArrayCollection $conflict;
 
     private readonly ArrayCollection $extra;
 
-    private readonly ArrayCollection $requireDev;
+    private ArrayCollection $requireDev;
 
     public function __construct()
     {
@@ -107,6 +107,15 @@ final class Composer
         return $this->require;
     }
 
+    /**
+     * @param ArrayCollection<int, Package> $require
+     */
+    public function setRequire(ArrayCollection $require): self
+    {
+        $this->require = $require;
+        return $this;
+    }
+
     public function addRequire(Package $package)
     {
         $this->require->add($package);
@@ -120,6 +129,39 @@ final class Composer
         return $this->requireDev;
     }
 
+    /**
+     * @param ArrayCollection<int, Package> $requireDev
+     */
+    public function setRequireDev(ArrayCollection $requireDev): self
+    {
+        $this->requireDev = $requireDev;
+        return $this;
+    }
+
+    public function removeDevAutoload(Autoload $autoload): self
+    {
+        if ($this->devAutoload->contains($autoload)) {
+            $this->devAutoload->removeElement($autoload);
+        }
+        return $this;
+    }
+
+    public function removeRequire(Package $package): self
+    {
+        if ($this->require->contains($package)) {
+            $this->require->removeElement($package);
+        }
+        return $this;
+    }
+
+    public function removeRequireDev(Package $package): self
+    {
+        if ($this->requireDev->contains($package)) {
+            $this->requireDev->removeElement($package);
+        }
+        return $this;
+    }
+
     public function addDevRequire(Package $package)
     {
         $this->requireDev->add($package);
@@ -128,6 +170,23 @@ final class Composer
     public function getConfig(): ArrayCollection
     {
         return $this->config;
+    }
+
+    /**
+     * @param ArrayCollection<int, Package> $config
+     */
+    public function setConfig(ArrayCollection $config): self
+    {
+        $this->requireDev = $config;
+        return $this;
+    }
+
+    public function removeConfig(Package $package): self
+    {
+        if ($this->config->contains($package)) {
+            $this->config->removeElement($package);
+        }
+        return $this;
     }
 
     public function addConfig(string $key, string $value)
@@ -143,9 +202,26 @@ final class Composer
         return $this->autoload;
     }
 
+    /**
+     * @param ArrayCollection<int, Package> $autoload
+     */
+    public function setAutoload(ArrayCollection $autoload): self
+    {
+        $this->requireDev = $autoload;
+        return $this;
+    }
+
     public function addAutoload(Autoload $autoload): void
     {
         $this->autoload->add($autoload);
+    }
+
+    public function removeAutoload(Autoload $autoload): self
+    {
+        if ($this->autoload->contains($autoload)) {
+            $this->autoload->removeElement($autoload);
+        }
+        return $this;
     }
 
     /**
@@ -174,14 +250,32 @@ final class Composer
         $this->scripts->add($script);
     }
 
+    public function removeScript(Script $script): self
+    {
+        if ($this->scripts->contains($script)) {
+            $this->scripts->removeElement($script);
+        }
+        return $this;
+    }
+
+    /**
+     * @param ArrayCollection<int, Script> $scripts
+     * @return $this
+     */
+    public function setScripts(ArrayCollection $scripts): self
+    {
+        $this->scripts = $scripts;
+        return $this;
+    }
+
     public function getRequirePackageByName(string $name): null|Package
     {
-        return $this->getRequire()->findFirst(fn (int $key, Package $package): bool => $name === $package->getName());
+        return $this->getRequire()->findFirst(fn(int $key, Package $package): bool => $name === $package->getName());
     }
 
     public function getDevPackageByName(string $name): null|Package
     {
-        return $this->getRequireDev()->findFirst(fn (int $key, Package $package): bool => $name === $package->getName());
+        return $this->getRequireDev()->findFirst(fn(int $key, Package $package): bool => $name === $package->getName());
     }
 
     public function getPackageByName(string $name): null|Package
@@ -191,6 +285,87 @@ final class Composer
             ...$this->getRequireDev(),
         ]);
 
-        return $packages->findFirst(fn (int $key, Package $package): bool => $name === $package->getName());
+        return $packages->findFirst(fn(int $key, Package $package): bool => $name === $package->getName());
+    }
+
+    /**
+     * @return ArrayCollection<int, Package>
+     */
+    public function getReplace(): ArrayCollection
+    {
+        return $this->replace;
+    }
+
+    public function addReplace(Package $package): void
+    {
+        $this->replace->add($package);
+    }
+
+    public function removeReplace(Package $package): self
+    {
+        if ($this->replace->contains($package)) {
+            $this->replace->removeElement($package);
+        }
+        return $this;
+    }
+
+    /**
+     * @param ArrayCollection<int, Package> $replace
+     */
+    public function setReplace(ArrayCollection $replace): self
+    {
+        $this->replace = $replace;
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection<mixed>
+     */
+    public function getExtra(): ArrayCollection
+    {
+        return $this->extra;
+    }
+
+    public function addExtra(mixed $extra): void
+    {
+        $this->extra->add($extra);
+    }
+
+    public function removeExtra(mixed $extra): self
+    {
+        if ($this->extra->contains($extra)) {
+            $this->extra->removeElement($extra);
+        }
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection<int, Package>
+     */
+    public function getConflict(): ArrayCollection
+    {
+        return $this->conflict;
+    }
+
+    public function addConflict(Package $package): void
+    {
+        $this->conflict->add($package);
+    }
+
+    public function removeConflict(Package $package): self
+    {
+        if ($this->conflict->contains($package)) {
+            $this->conflict->removeElement($package);
+        }
+        return $this;
+    }
+
+    /**
+     * @param ArrayCollection<int, Package> $conflicts
+     */
+    public function setConflict(ArrayCollection $conflicts): self
+    {
+        $this->conflict = $conflicts;
+        return $this;
     }
 }

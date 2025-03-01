@@ -9,51 +9,61 @@ A tool that converts your composer.json file to an object and allows you to find
 ### Usage
 
 Basic usage
+
 ````php
-        $composer = (new Parser())
-            ->withName()
-             ->withRequire()
-              ->withRequireDev()
-               ->withAutoload()
-                ->withMinimumStability()
-                 ->withScripts()
-                  ->getComposer();
-        // Will output a Composer object
+use KerrialNewham\ComposerJsonParser\ComposerJson;
+
+$composer = (new ComposerJson())->getComposer()
+// Will find composer.json create a Composer object 
 ````
 
-Need to find a specific package? 
+With composer.json path
+
 ````php
-declare(strict_types=1);
+use KerrialNewham\ComposerJsonParser\ComposerJson;
 
-namespace App;
+$composer = (new ComposerJson())
+    ->withComposerJsonPath(path: 'composer/json/directory/')
+    ->getComposer()
+// Will return a Composer object 
+````
 
-use ComposerJsonParser\Parser;
+Don't need to load everything, only what you need:
+````php
+    use KerrialNewham\ComposerJsonParser\ComposerJson;
 
-class ExampleClass
-{
+    $composer = (new ComposerJson())
+    ->withName()
+    ->withRequire()
+    ->withAutoload()
+    ->getComposer()
+    // Will return a Composer object 
+````
 
-     public function someMethod() : void 
-     {
-        $composer = (new Parser())->withRequire()->getComposer();
-        $doctrineOrmPackage = $composer->getRequire()->findFirst(fn (int $key, Package $package) =>  $package->getName() == 'php');
-        var_dump($doctrineOrmPackage);
-           
-//        object(ComposerJsonParser\Model\Package)#22 (3) {
-//          ["name":"ComposerJsonParser\Model\Package":private]=>
-//          string(12) "doctrine/orm"
-//          ["type":"ComposerJsonParser\Model\Package":private]=>
-//          enum(ComposerJsonParser\Enum\PackageTypeEnum::DEVELOPMENT)
-//          ["packageVersion":"ComposerJsonParser\Model\Package":private]=>
-//          object(ComposerJsonParser\Model\PackageVersion)#23 (2) {
-//            ["version"]=>
-//            float(3.1)
-//            ["versionConstraints"]=>
-//            string(1) "^"
-//          }
-//        }
+Need to find a specific package?
+````php
+$composer = (new ComposerJson())->withRequire()->getComposer();
+$doctrineOrmPackage = $composer->getRequire()->findFirst(fn (int $key, Package $package) =>  $package->getName() == 'php');
+````
 
-        
-     }
+Need to modify the composer.json?
+````php
+use KerrialNewham\ComposerJsonParser\ComposerJson;
+use KerrialNewham\ComposerJsonParser\Model\Autoload;
     
-}
+$autoload = new Autoload(namespace: 'App\\', path: './src');
+$composer = (new ComposerJson())->addPsr4Autoload($autoload)
+// Will update composer.json with new PSR4 Autoload namespace
+````
+
+What about add a package programmatically?
+````php
+use KerrialNewham\ComposerJsonParser\ComposerJson;
+use KerrialNewham\ComposerJsonParser\Model\Autoload;
+    
+$packageVersion = new PackageVersion(versionString: '^2.0', version: 2.0, versionConstraints: '^');
+$composerJsonPackage = new Package(name: 'kerrialn/composer-json-parser', type: PackageTypeEnum::REQUIRE, packageVersion: $packageVersion);
+
+(new ComposerJson())->withComposerJsonPath()->addRequire(package: $composerJsonPackage);
+// Will update composer.json with new package.
 ````
